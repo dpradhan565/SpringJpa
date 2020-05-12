@@ -3,13 +3,15 @@ package com.cognizant.truyumm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cognizant.truyumm.TruyummApplication;
 import com.cognizant.truyumm.model.Cart;
 import com.cognizant.truyumm.model.Menu;
 import com.cognizant.truyumm.repository.MenuRepository;
@@ -28,12 +30,16 @@ public class CartController {
 	@Autowired
 	MenuService menuService;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TruyummApplication.class);
+	
 	@RequestMapping("/menu-item-list-customer")
 	public String showProduct(ModelMap map)
 	{
+		LOGGER.info("Start");
 		List<Cart> cart=menuService.getMenuCust();
+		LOGGER.debug("CustomerMenu={}", cart);
 		map.put("menulist",cart);
-		
+		LOGGER.info("End");
 		return "menu-item-list-customer";	
 	}
 	
@@ -41,8 +47,10 @@ public class CartController {
 	@RequestMapping("/menu-item-list-customer-notification")
 	public String saveCart(ModelMap map,@RequestParam Integer id)
 	{
+		LOGGER.info("Start");
 	
 		 List<Menu> menu=(List<Menu>) menuRepository.findAll();
+		 LOGGER.debug("Menu={}", menu);
 		 Cart c=new Cart();
 		 for(Menu m:menu)
 		 {
@@ -79,7 +87,7 @@ public class CartController {
 			}
 			map.put("cartlist",cart);
 			
-		  
+			LOGGER.info("End");
 		 
 		return "menu-item-list-customer-notification";	
 	}
@@ -90,15 +98,17 @@ public class CartController {
 	@RequestMapping("/cart-notification")
 	public String deletefromCart(ModelMap map,@RequestParam Integer id)
 	{
-	
+		LOGGER.info("Start");
 			
 		
 		
 		
 		productRepository.deleteById(id);
 		 List<Cart> cart=(List<Cart>) productRepository.findAll();
+		 LOGGER.debug("CartAfterDelete={}", cart);
 		if(cart.size()>0)	
 		{ map.put("cartlist",cart);
+		LOGGER.info("End");
 		return "cart-notification";
 		}
 		else
@@ -110,9 +120,12 @@ public class CartController {
 	
 	@RequestMapping("/cart")
 	public String cartItems(ModelMap map) {
+		LOGGER.info("Start");
 		List<Cart> c=(List<Cart>) productRepository.findAll();
+		LOGGER.debug("CartItems={}", c);
 		if(c.size()>0) {
 		map.put("cartlist",c);
+		LOGGER.info("End");
 		return "cart";
 		}
 		else
